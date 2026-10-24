@@ -31,24 +31,25 @@ body{
 .tv{width:fit-content;max-width:100%;background:#3b3f5c;border:4px solid var(--shadow);padding:8px;box-shadow:6px 6px 0 var(--shadow)}
 .screen{position:relative;width:var(--sw);height:calc(var(--sw)*4/3);background:var(--dark);border:4px solid var(--shadow);overflow:hidden;display:flex;align-items:center;justify-content:center;text-align:center}
 .screen::after{content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(transparent 0 2px,rgba(0,0,0,.22) 2px 4px)}
-canvas{position:absolute;inset:0;width:100%;height:100%;image-rendering:pixelated;display:none}
+canvas{position:absolute;inset:0;width:100%;height:100%;image-rendering:auto;display:none}
 .msg{padding:14px;color:var(--green);font-size:9px}
 .blink{animation:blink 1s steps(2,start) infinite}
 @keyframes blink{to{visibility:hidden}}
 .bar{display:none;width:70%;height:18px;border:4px solid var(--ink);padding:2px}
 .bar i{display:block;height:100%;width:0;background:var(--green)}
 .loading .bar{display:block}
-.loading .bar i{animation:fill 1.1s steps(8,end) forwards}
+.loading .bar i{animation:fill .5s steps(8,end) forwards}
 @keyframes fill{to{width:100%}}
 .loading .msg,.done .msg{display:none}
 .loading .bar+.lt{display:block}
 .lt{display:none;position:absolute;bottom:14px;left:0;right:0;font-size:8px;color:var(--green)}
 .done canvas{display:block}
+.screen.done::after{display:none}
 
 /* console e cartucce */
 .deck{position:relative;width:100%;max-width:340px;height:210px}
 .carts{position:absolute;left:0;right:0;top:0;display:flex;gap:8px;justify-content:center;z-index:1}
-.cart{position:relative;flex:1;max-width:104px;height:96px;background:#6b6e8a;border:4px solid var(--shadow);box-shadow:4px 4px 0 var(--shadow);cursor:pointer;padding:0;font:inherit;color:inherit;transition:transform .6s steps(6,end);animation:bob 1.2s steps(2,end) infinite}
+.cart{position:relative;flex:1;max-width:104px;height:96px;background:#6b6e8a;border:4px solid var(--shadow);box-shadow:4px 4px 0 var(--shadow);cursor:pointer;padding:0;font:inherit;color:inherit;transition:transform .3s steps(6,end);animation:bob 1.2s steps(2,end) infinite}
 .cart:nth-child(2){animation-delay:.4s}.cart:nth-child(3){animation-delay:.8s}
 .cart::before{content:"";position:absolute;left:8px;right:8px;bottom:-4px;height:8px;background:var(--accent);border:4px solid var(--shadow)}
 .lab{position:absolute;left:8px;right:8px;top:8px;height:56px;background:var(--c);border:4px solid var(--shadow);display:flex;align-items:center;justify-content:center;text-align:center;font-size:7px;line-height:1.6;color:#fff;text-shadow:2px 2px 0 var(--shadow)}
@@ -82,7 +83,7 @@ canvas{position:absolute;inset:0;width:100%;height:100%;image-rendering:pixelate
     <div class="screen" id="screen">
       <div class="msg blink" id="msg">INSERISCI<br>LA CARTUCCIA</div>
       <div class="bar"><i></i></div><div class="lt">CARICAMENTO...</div>
-      <canvas id="cv" width="240" height="320" aria-label="Copertina del fumetto del mese"></canvas>
+      <canvas id="cv" width="720" height="960" aria-label="Copertina del fumetto del mese"></canvas>
     </div>
   </section>
 
@@ -102,9 +103,7 @@ canvas{position:absolute;inset:0;width:100%;height:100%;image-rendering:pixelate
   <p class="hint blink" id="hint">&#9650; TOCCA UNA CARTUCCIA</p>
 
   <footer class="foot" id="foot">
-    <b id="orari">Dal martedì al sabato, 10:00 alle 19:30</b><br>
-    <span id="indirizzo">Via dei Fumetti 1, Città</span><br>
-    Disponibile in negozio
+    <b id="gruppo">Gruppo lettura ogni mercoledì - ore 18 - Via Palazzola, 43/A, 47121 Forlì FC</b>
   </footer>
 </main>
 
@@ -116,17 +115,17 @@ canvas{position:absolute;inset:0;width:100%;height:100%;image-rendering:pixelate
    ## titolo    = testo mostrato sotto lo schermo
    ## copertina = link all'immagine, formato verticale 3:4
    ##             (quelli sotto sono segnaposto: sostituiscili con i link reali)
-   ##             Se il link manca o non si carica, compare il disegno pixel art di esempio.
+   ##             Se il link manca o non si carica, compare un segnaposto pulito con il titolo.
    ######################################################################### */
 const LETTURE = [
-  { categoria:"FUMETTO DEL MESE",  titolo:"WATCHMEN",       copertina:"https://www.panini.it/shp_ita_it/watchmen-m1pock003isbn-it08.html" },
-  { categoria:"AUTORE DEL MESE",   titolo:"JIRO TANIGUCHI", copertina:"https://www.panini.it/shp_ita_it/l-uomo-che-cammina-mtade001isbn-it08.html" },
+  { categoria:"FUMETTO DEL MESE",  titolo:"WATCHMEN",       copertina:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS2ILdSffl1UYSzlcTYTgdtm_uupJp-EYvEGrxpSaoNe2AvCFt-HkNpMv-M&s=10" },
+  { categoria:"AUTORE DEL MESE",   titolo:"JIRO TANIGUCHI", copertina:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQkC4GCOBeNjD2-H469reN6H1TOoNnWeTtEhfLD_-YH0va2T69SKYpI7qA&s=10" },
   { categoria:"USCITE ANTEPRIMA",  titolo:"AKIRA",          copertina:"https://m.media-amazon.com/images/I/71V54jX0fML._AC_UF1000,1000_QL80_.jpg" }
 ];
 /* ######################## FINE PARTE DA AGGIORNARE ####################### */
 
 const CONFIG = {
-  negozio:  "LA TUA FUMETTERIA",
+  negozio:  "I CONSIGLI DI ETABETA",
   orari:    "Dal martedì al sabato, 10:00 alle 19:30",
   indirizzo:"Via dei Fumetti 1, Città"
 };
@@ -136,76 +135,46 @@ $("shop").textContent = CONFIG.negozio;
 $("orari").textContent = CONFIG.orari;
 $("indirizzo").textContent = CONFIG.indirizzo;
 
-const cv = $("cv"), ctx = cv.getContext("2d"), W = cv.width, H = cv.height, U = 8;
+const cv = $("cv"), ctx = cv.getContext("2d"), W = cv.width, H = cv.height;
 
-/* ---- copertine di esempio in pixel art ---- */
-function mk(){ const c=document.createElement("canvas"); c.width=W; c.height=H; return [c,c.getContext("2d")]; }
-function B(g,col,x,y,w=1,h=1){ g.fillStyle=col; g.fillRect(x*U,y*U,w*U,h*U); }
-function disc(g,col,cx,cy,r){ for(let y=0;y<40;y++) for(let x=0;x<30;x++) if((x+.5-cx)**2+(y+.5-cy)**2<=r*r) B(g,col,x,y); }
-function bar(g,lines,col){
-  const s=18,h=lines.length*(s+4)+10;
-  g.fillStyle="rgba(15,16,32,.88)"; g.fillRect(0,H-h,W,h);
-  g.fillStyle=col; g.font="bold "+s+"px monospace"; g.textAlign="center";
-  lines.forEach((t,i)=>g.fillText(t,W/2,H-h+s+6+i*(s+4)));
+/* ---- segnaposto pulito, usato solo se il link della copertina manca o non si carica ---- */
+function placeholder(i){
+  const c=document.createElement("canvas"); c.width=W; c.height=H;
+  const g=c.getContext("2d");
+  const bg=g.createLinearGradient(0,0,0,H); bg.addColorStop(0,"#262b44"); bg.addColorStop(1,"#0f1020");
+  g.fillStyle=bg; g.fillRect(0,0,W,H);
+  g.textAlign="center"; g.textBaseline="middle";
+  g.fillStyle="#b0b0c0"; g.font="600 34px sans-serif";
+  g.fillText(LETTURE[i].categoria,W/2,H*0.36);
+  g.fillStyle="#ffcd75"; g.font="800 64px sans-serif";
+  const lines=[]; let row="";
+  LETTURE[i].titolo.split(" ").forEach(w=>{ const t=row?row+" "+w:w; if(row && g.measureText(t).width>W-80){ lines.push(row); row=w; } else row=t; });
+  lines.push(row);
+  lines.forEach((t,k)=>g.fillText(t,W/2,H*0.5+(k-(lines.length-1)/2)*78));
+  return c;
 }
-function art1(){
-  const [c,g]=mk(); B(g,"#1a1c2c",0,0,30,40);
-  for(let y=0;y<34;y+=2) B(g,"#262b44",0,y,30,1);
-  disc(g,"#ffcd75",15,15,10); disc(g,"#1a1c2c",15,15,8);
-  B(g,"#ffcd75",14,8,2,7); B(g,"#ef7d57",11,12,3,2);
-  B(g,"#ffcd75",14,22,2,1); B(g,"#ffcd75",7,14,1,2); B(g,"#ffcd75",22,14,1,2);
-  B(g,"#b13e53",19,7,2,2); B(g,"#b13e53",19,9,1,3);
-  bar(g,["WATCHMEN"],"#ffcd75"); return c;
-}
-function art2(){
-  const [c,g]=mk();
-  B(g,"#41a6f6",0,0,30,6); B(g,"#73eff7",0,6,30,16); B(g,"#38b764",0,22,30,18);
-  B(g,"#f4f4f4",4,3,6,1); B(g,"#f4f4f4",5,2,4,1); B(g,"#f4f4f4",20,6,5,1); B(g,"#f4f4f4",21,5,3,1);
-  for(let y=22;y<40;y++){ const w=2+(y-22); B(g,"#c8c8d0",15-(w>>1),y,w,1); }
-  B(g,"#7a4a21",3,13,2,11); disc(g,"#257179",4,10,5);
-  B(g,"#7a4a21",25,14,2,10); disc(g,"#257179",26,12,5);
-  B(g,"#f5c9a0",14,20,2,2); B(g,"#29366f",13,22,4,5);
-  B(g,"#29366f",13,27,1,4); B(g,"#29366f",16,27,1,3); B(g,"#3b5dc9",12,23,1,3);
-  bar(g,["L\u2019UOMO CHE","CAMMINA"],"#f4f4f4"); return c;
-}
-function art3(){
-  const [c,g]=mk();
-  B(g,"#1a1c2c",0,0,30,8); B(g,"#3b1e5c",0,8,30,6); B(g,"#5d275d",0,14,30,6); B(g,"#b13e53",0,20,30,6);
-  const hs=[10,14,8,17,12,9,15,11];
-  hs.forEach((h,i)=>{ const x=i*4; B(g,"#0f1020",x,26-h,4,h);
-    for(let wy=26-h+1;wy<25;wy+=2) for(let wx=x;wx<x+4;wx+=2) if((wx*7+wy*3)%5<2) B(g,"#ffcd75",wx+1,wy); });
-  B(g,"#333c57",0,26,30,14);
-  [2,12,22].forEach(x=>B(g,"#f4f4f4",x,31,4,1));
-  disc(g,"#0f1020",8,29,2.3); disc(g,"#0f1020",20,29,2.3); disc(g,"#b0b0c0",8,29,1); disc(g,"#b0b0c0",20,29,1);
-  B(g,"#e43b44",6,25,3,2); B(g,"#e43b44",8,26,10,2); B(g,"#e43b44",11,23,5,3);
-  B(g,"#0f1020",9,24,2,1); B(g,"#73eff7",17,24,1,2); B(g,"#e43b44",18,26,2,3);
-  bar(g,["AKIRA"],"#e43b44"); return c;
-}
-const ARTS=[art1,art2,art3];
 
 function load(i){
   return new Promise(res=>{
     const url = LETTURE[i].copertina;
-    if(!url) return res(ARTS[i]());
+    if(!url) return res(placeholder(i));
     const im = new Image();
     im.onload = ()=>res(im);
-    im.onerror = ()=>res(ARTS[i]());
+    im.onerror = ()=>res(placeholder(i));
     im.src = url;
   });
 }
 
-function draw(src, px){
-  const t = document.createElement("canvas");
-  t.width = px; t.height = Math.max(1, Math.round(px*H/W));
-  const tg = t.getContext("2d"); tg.imageSmoothingEnabled = true;
-  tg.drawImage(src,0,0,t.width,t.height);
-  ctx.imageSmoothingEnabled = false;
+function drawCover(src){
+  const sw = src.naturalWidth || src.width, sh = src.naturalHeight || src.height;
+  const k = Math.max(W/sw, H/sh), w = sw*k, h = sh*k;
+  ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = "high";
   ctx.clearRect(0,0,W,H);
-  ctx.drawImage(t,0,0,W,H);
+  ctx.drawImage(src,(W-w)/2,(H-h)/2,w,h);
 }
 
 let typeId = null;
-function type(el, text, speed=70){
+function type(el, text, speed=40){
   clearInterval(typeId); el.textContent = ""; let i = 0;
   typeId = setInterval(()=>{ el.textContent = text.slice(0,++i); if(i>=text.length) clearInterval(typeId); }, speed);
 }
@@ -230,17 +199,15 @@ async function select(i){
   clearInterval(typeId); $("title").textContent = "...";
   $("k").textContent = LETTURE[i].categoria;
   screen.classList.remove("done","loading");
+  const t0 = performance.now();
   const imgPromise = load(i);
-  setTimeout(()=>{ void screen.offsetWidth; screen.classList.add("loading"); }, 650);
+  setTimeout(()=>{ void screen.offsetWidth; screen.classList.add("loading"); }, 300);
   const src = await imgPromise;
   setTimeout(()=>{
     screen.classList.remove("loading"); screen.classList.add("done");
-    [4,8,16,32,64,120,W].forEach((px,k)=>setTimeout(()=>{
-      if(px===W){ ctx.imageSmoothingEnabled = true; ctx.clearRect(0,0,W,H); ctx.drawImage(src,0,0,W,H); }
-      else draw(src,px);
-    }, k*140));
-    setTimeout(()=>{ type($("title"), LETTURE[i].titolo); busy = false; }, 1000);
-  }, 1850);
+    drawCover(src);
+    setTimeout(()=>{ type($("title"), LETTURE[i].titolo); busy = false; }, 150);
+  }, Math.max(0, 800 - (performance.now() - t0)));
 }
 carts.forEach((c,i)=>c.addEventListener("click",()=>select(i)));
 </script>
